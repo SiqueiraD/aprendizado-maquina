@@ -5,6 +5,12 @@ from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 
+# Função auxiliar para criar instâncias reutilizáveis de DecisionTreeClassifier
+# Isso evita repetição de código e garante consistência de parâmetros em todo o script.
+def create_decision_tree(random_state=42, max_depth=3, **kwargs):
+    """Retorna um DecisionTreeClassifier configurado com parâmetros padrão."""
+    return DecisionTreeClassifier(random_state=random_state, max_depth=max_depth, **kwargs)
+
 # Carregando os dados
 column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class']
 import os
@@ -36,7 +42,7 @@ def plot_decision_boundaries(X, y, clf, feature_names, class_names, resolution=0
             X_pair = X[:, [i, j]]
             
             # Criando o classificador apenas com as duas características
-            clf_pair = DecisionTreeClassifier(random_state=42, max_depth=2)
+            clf_pair = create_decision_tree()
             clf_pair.fit(X_pair, y)
             
             # Configurando o gráfico
@@ -148,7 +154,7 @@ X = df.iloc[:, :-1].values
 y = df.iloc[:, -1].values
 
 # Criando e treinando o modelo para visualização das regiões de decisão
-clf_vis = DecisionTreeClassifier(random_state=42, max_depth=2)
+clf_vis = create_decision_tree()
 clf_vis.fit(X, y)
 
 # Obtendo os nomes das características e classes
@@ -163,7 +169,7 @@ def train_test_evaluation(test_size=0.3, random_state=42):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
     
     # Criando e treinando o modelo
-    clf = DecisionTreeClassifier(random_state=42, max_depth=2)
+    clf = create_decision_tree()
     clf.fit(X_train, y_train)
     
     # Fazendo previsões
@@ -194,7 +200,7 @@ for prop in proportions:
 
 # ii) 10-fold Cross Validation
 def cross_validation_evaluation():
-    clf = DecisionTreeClassifier(random_state=42)
+    clf = create_decision_tree()
     
     # 10-fold cross validation
     kf = KFold(n_splits=10, shuffle=True, random_state=42)
@@ -215,4 +221,3 @@ def cross_validation_evaluation():
 
 # Executando a validação cruzada
 cross_validation_evaluation()
-
